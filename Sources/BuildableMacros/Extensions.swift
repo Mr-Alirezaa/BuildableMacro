@@ -11,7 +11,12 @@ extension SyntaxNodeString.StringInterpolation {
     }
 }
 extension SyntaxProtocol {
-    func `is`<C: Collection>(oneOf syntaxTypes: C) -> Bool where C.Element == SyntaxProtocol.Type {
+    func `is`<C: Collection>(anyOf syntaxTypes: C) -> Bool where C.Element == SyntaxProtocol.Type {
         syntaxTypes.contains { self.is($0) }
+    }
+}
+extension Collection where Element: Equatable {
+    func contains<C: Collection>(anyOf collection: C) -> Bool where C.Element == Element {
+        contains(where: { collection.contains($0) })
     }
 }

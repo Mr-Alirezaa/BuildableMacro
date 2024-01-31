@@ -2,8 +2,12 @@ import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import SwiftDiagnostics
 
 public struct BuildableMacro: MemberAttributeMacro {
+    static let trackedAttributeName = "BuildableTracked"
+    static let ignoredAttributeName = "BuildableIgnored"
+
     public static func expansion<DG: DeclGroupSyntax, D: DeclSyntaxProtocol, C: MacroExpansionContext>(
         of node: AttributeSyntax,
         attachedTo declaration: DG,
@@ -12,26 +16,33 @@ public struct BuildableMacro: MemberAttributeMacro {
     ) throws -> [AttributeSyntax] {
         try diagnosticsOf(applying: node, to: declaration)
 
-        guard let variableDecl = member.as(VariableDeclSyntax.self) else { return [] }
+        guard let variableDecl = member.as(VariableDeclSyntax.self),
+              variableDecl.bindingSpecifier.text == "var"
+        else { return [] }
 
-        // TODO: Check for get-only computed properties 
-
-        let ignoredAttributeName = "BuildableIgnored"
-        let trackedAttributeName = "BuildableTracked"
+        if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
+            switch accessors {
+            case let .accessors(accessorList):
+                let specifiers = accessorList.map(\.accessorSpecifier.text)
+                if !specifiers.contains(anyOf: ["set", "_modify"]) {
+                    return []
+                }
+            case .getter:
+                return []
+            }
+        }
 
         let currentAttributeNames = variableDecl.attributes.compactMap {
             if case let .attribute(att) = $0 { att.attributeName.trimmedDescription } else { nil }
         }
 
-        if currentAttributeNames.contains(ignoredAttributeName) || currentAttributeNames.contains(trackedAttributeName) {
+        if currentAttributeNames.contains(anyOf: [ignoredAttributeName, trackedAttributeName]) {
             return []
         }
 
-        return if trackedByDefault(node: node) {
-            ["@\(raw: trackedAttributeName)"]
-        } else {
-            ["@\(raw: ignoredAttributeName)"]
-        }
+        let tracked = trackedByDefault(node: node)
+        let attributeName: TypeSyntax = "\(raw: tracked ? trackedAttributeName : ignoredAttributeName)"
+        return [AttributeSyntax(attributeName: attributeName)]
     }
 
     private static func trackedByDefault(node: AttributeSyntax) -> Bool {
