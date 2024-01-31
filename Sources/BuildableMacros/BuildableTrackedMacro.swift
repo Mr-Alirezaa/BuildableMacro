@@ -2,6 +2,7 @@ import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import SwiftDiagnostics
 
 public struct BuildableTrackedMacro: PeerMacro {
     public static func expansion<D: DeclSyntaxProtocol, C: MacroExpansionContext>(
@@ -40,5 +41,32 @@ public struct BuildableTrackedMacro: PeerMacro {
         else { return nil }
 
         return TokenSyntax.identifier(labelValue)
+    }
+
+    private static func diagnoseIssuesOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {
+        var diagnostics: [Diagnostic] = []
+
+        if let variableDecl = node.as(VariableDeclSyntax.self) {
+            if variableDecl.bindingSpecifier.text == "let" {
+                diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl.bindingSpecifier))
+            }
+
+            if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
+                switch accessors {
+                case let .accessors(accessorList):
+                    let specifiers = accessorList.map(\.accessorSpecifier.text)
+                    if !specifiers.contains(anyOf: ["set", "_modify"]) {
+                        diagnostics.append(BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: accessors))
+                    }
+                case .getter:
+                    diagnostics.append(BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: accessors))
+                }
+            }
+        } else {
+            diagnostics.append(BuildableTrackedMacroDiagnostic.nonVariableDeclaration.diagnose(at: decl))
+        }
+
+        guard !diagnostics.isEmpty else { return }
+        throw DiagnosticsError(diagnostics: diagnostics)
     }
 }

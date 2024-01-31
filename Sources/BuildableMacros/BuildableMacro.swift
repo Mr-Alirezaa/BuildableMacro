@@ -14,7 +14,7 @@ public struct BuildableMacro: MemberAttributeMacro {
         providingAttributesFor member: D,
         in context: C
     ) throws -> [AttributeSyntax] {
-        try diagnosticsOf(applying: node, to: declaration)
+        try diagnoseIssuesOf(applying: node, to: declaration)
 
         guard let variableDecl = member.as(VariableDeclSyntax.self),
               variableDecl.bindingSpecifier.text == "var"
@@ -55,7 +55,7 @@ public struct BuildableMacro: MemberAttributeMacro {
         return value
     }
 
-    private static func diagnosticsOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {
+    private static func diagnoseIssuesOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {
         var diagnostics: [Diagnostic] = []
         if !decl.`is`(anyOf: [StructDeclSyntax.self, ClassDeclSyntax.self, ActorDeclSyntax.self]) {
             diagnostics.append(BuildableMacroDiagnostic.nonNominalType.diagnose(at: decl))
