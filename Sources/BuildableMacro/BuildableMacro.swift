@@ -1,11 +1,21 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+@attached(memberAttribute)
+public macro Buildable(
+    trackedByDefault: Bool = true
+) = #externalMacro(
+    module: "BuildableMacros",
+    type: "BuildableMacro"
+)
 
-/// A macro that produces both a value and a string containing the
-/// source code that generated the value. For example,
-///
-///     #stringify(x + y)
-///
-/// produces a tuple `(x + y, "x + y")`.
-@freestanding(expression)
-public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "BuildableMacroMacros", type: "StringifyMacro")
+@attached(peer, names: arbitrary)
+public macro BuildableTracked(
+    name: StaticString? = nil
+) = #externalMacro(
+    module: "BuildableMacros",
+    type: "BuildableTrackedMacro"
+)
+
+@attached(accessor, names: named(willSet))
+public macro BuildableIgnored() = #externalMacro(
+    module: "BuildableMacros",
+    type: "BuildableIgnoredMacro"
+)

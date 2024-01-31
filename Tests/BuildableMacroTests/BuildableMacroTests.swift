@@ -1,46 +1,47 @@
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
+import MacroTesting
 
-// Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
-#if canImport(BuildableMacroMacros)
-import BuildableMacroMacros
-
-let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
-]
-#endif
+import BuildableMacros
 
 final class BuildableMacroTests: XCTestCase {
-    func testMacro() throws {
-        #if canImport(BuildableMacroMacros)
-        assertMacroExpansion(
-            """
-            #stringify(a + b)
-            """,
-            expandedSource: """
-            (a + b, "a + b")
-            """,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
+    override func invokeTest() {
+        withMacroTesting(
+            isRecording: true,
+            macros: ["Buildable": BuildableMacro.self]
+        ) {
+            super.invokeTest()
+        }
     }
 
-    func testMacroWithStringLiteral() throws {
-        #if canImport(BuildableMacroMacros)
-        assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
+    func testMacro() throws {
+        assertMacro {
+            """
+            @Buildable(trackedByDefault: false)
+            struct Person {
+                var name: String = ""
+
+                @BuildableTracked(label: "setLastName")
+                var lastName: String = ""
+
+                @BuildableIgnored
+                var age: In = ""
+            }
+            """
+        } expansion: {
+            """
+            struct Person {
+                @BuildableIgnored
+                var name: String = ""
+
+                @BuildableTracked(label: "setLastName")
+                var lastName: String = ""
+
+                @BuildableIgnored
+                var age: In = ""
+            }
+            """
+        }
     }
 }

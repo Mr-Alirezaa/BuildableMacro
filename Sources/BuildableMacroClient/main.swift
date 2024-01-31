@@ -1,8 +1,22 @@
+import Observation
+import Foundation
 import BuildableMacro
 
-let a = 17
-let b = 25
+@Buildable
+struct Person {
+    var name: String
 
-let (result, code) = #stringify(a + b)
+    @BuildableTracked(name: "setLastName")
+    var lastName: String
 
-print("The value \(result) was produced by the code \"\(code)\"")
+    @BuildableIgnored
+    var age: Int
+}
+
+let person = Person(name: "Alireza", lastName: "Asadi", age: 27)
+
+let otherPerson = person
+    .name("Mammad")
+    .setLastName("Gholam")
+
+print(otherPerson.name, otherPerson.lastName)
