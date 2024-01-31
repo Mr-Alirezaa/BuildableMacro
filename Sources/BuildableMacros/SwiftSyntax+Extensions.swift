@@ -22,9 +22,3 @@ extension DiagnosticMessage {
         Diagnostic(node: node, message: self)
     }
 }
-
-extension Collection where Element: Equatable {
-    func contains<C: Collection>(anyOf collection: C) -> Bool where C.Element == Element {
-        contains(where: { collection.contains($0) })
-    }
-}
