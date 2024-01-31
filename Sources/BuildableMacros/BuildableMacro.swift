@@ -56,8 +56,12 @@ public struct BuildableMacro: MemberAttributeMacro {
     }
 
     private static func diagnosticsOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {
-        if !decl.is(oneOf: [StructDeclSyntax.self, ClassDeclSyntax.self, ActorDeclSyntax.self]) {
-//            throw Diagnos
+        var diagnostics: [Diagnostic] = []
+        if !decl.`is`(anyOf: [StructDeclSyntax.self, ClassDeclSyntax.self, ActorDeclSyntax.self]) {
+            diagnostics.append(BuildableMacroDiagnostic.nonNominalType.diagnose(at: decl))
         }
+
+        guard !diagnostics.isEmpty else { return }
+        throw DiagnosticsError(diagnostics: diagnostics)
     }
 }

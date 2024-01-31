@@ -3,11 +3,11 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftDiagnostics
 
-enum MacroDiagnostic {
+enum BuildableMacroDiagnostic {
     case nonNominalType
 }
 
-extension MacroDiagnostic: DiagnosticMessage {
+extension BuildableMacroDiagnostic: DiagnosticMessage {
     var macroName: String { "Buildable" }
 
     var severity: DiagnosticSeverity {
@@ -26,9 +26,5 @@ extension MacroDiagnostic: DiagnosticMessage {
         case .nonNominalType:
             MessageID(domain: macroName, id: "nonNominalType")
         }
-    }
-
-    func diagnose<S: SyntaxProtocol>(at node: S) -> Diagnostic {
-        Diagnostic(node: node, message: self)
     }
 }
