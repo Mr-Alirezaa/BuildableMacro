@@ -18,28 +18,74 @@ final class BuildableMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacro {
             """
-            @Buildable(trackedByDefault: false)
-            struct Person {
-                var name: String = ""
-
-                @BuildableTracked(label: "setLastName")
-                var lastName: String = ""
-
+            @Buildable
+            struct Sample {
+                var p1: String
+                var p2: String = ""
+                @BuildableTracked
+                var p3: String
+                @BuildableTracked
+                var p4: String = ""
                 @BuildableIgnored
-                var age: In = ""
+                var p5: Int
+                @BuildableIgnored
+                var p6: Int = 0
+                let p7: Data
+                let p8: Data = Data()
+                var p9: Int { 0 }
+                var p10: Int {
+                    0
+                }
+                var p11: Int {
+                    get { 0 }
+                }
+                var p12: Int {
+                    get { 0 }
+                    set { print(newValue) }
+                }
+                var p13: () -> Void
+                var p14: (String) -> Void
+                var p15: (String) -> String
+                var p16: () -> String
             }
             """
         } expansion: {
             """
-            struct Person {
+            struct Sample {
+                @BuildableTracked
+                var p1: String
+                @BuildableTracked
+                var p2: String = ""
+                @BuildableTracked
+                var p3: String
+                @BuildableTracked
+                var p4: String = ""
                 @BuildableIgnored
-                var name: String = ""
-
-                @BuildableTracked(label: "setLastName")
-                var lastName: String = ""
-
+                var p5: Int
                 @BuildableIgnored
-                var age: In = ""
+                var p6: Int = 0
+                let p7: Data
+                let p8: Data = Data()
+                var p9: Int { 0 }
+                var p10: Int {
+                    0
+                }
+                var p11: Int {
+                    get { 0 }
+                }
+                @BuildableTracked
+                var p12: Int {
+                    get { 0 }
+                    set { print(newValue) }
+                }
+                @BuildableTracked
+                var p13: () -> Void
+                @BuildableTracked
+                var p14: (String) -> Void
+                @BuildableTracked
+                var p15: (String) -> String
+                @BuildableTracked
+                var p16: () -> String
             }
             """
         }

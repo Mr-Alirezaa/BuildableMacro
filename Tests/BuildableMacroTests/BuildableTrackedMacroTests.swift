@@ -38,29 +38,29 @@ final class BuildableTrackedMacroTests: XCTestCase {
                 var name: String = ""
 
                 func name(_ value: String) -> Self {
-                    var new = self
-                    new.name = value
-                    return new
+                    var copy = self
+                    copy.name = value
+                    return copy
                 }
                 var onChange: () -> Void
 
                 func onChange(_ value: @escaping () -> Void) -> Self {
-                    var new = self
-                    new.onChange = value
-                    return new
+                    var copy = self
+                    copy.onChange = value
+                    return copy
                 }
                 var score: Int, isMale: Bool
 
                 func score(_ value: Int) -> Self {
-                    var new = self
-                    new.score = value
-                    return new
+                    var copy = self
+                    copy.score = value
+                    return copy
                 }
 
                 func isMale(_ value: Bool) -> Self {
-                    var new = self
-                    new.isMale = value
-                    return new
+                    var copy = self
+                    copy.isMale = value
+                    return copy
                 }
 
                 @BuildableIgnored
