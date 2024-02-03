@@ -1,6 +1,6 @@
 @attached(memberAttribute)
 public macro Buildable(
-    trackedByDefault: Bool = true
+    forceIgnored: Bool = false
 ) = #externalMacro(
     module: "BuildableMacros",
     type: "BuildableMacro"
@@ -8,7 +8,8 @@ public macro Buildable(
 
 @attached(peer, names: arbitrary)
 public macro BuildableTracked(
-    name: StaticString? = nil
+    name: StaticString? = nil,
+    forceEscaping: Bool = false
 ) = #externalMacro(
     module: "BuildableMacros",
     type: "BuildableTrackedMacro"
