@@ -40,19 +40,9 @@ public struct BuildableMacro: MemberAttributeMacro {
             return []
         }
 
-        let tracked = trackedByDefault(node: node)
-        let attributeName: TypeSyntax = "\(raw: tracked ? trackedAttributeName : ignoredAttributeName)"
+        let ignored = try node.extractBooleanValue(for: "forceIgnored") ?? false
+        let attributeName: TypeSyntax = "\(raw: ignored ? ignoredAttributeName : trackedAttributeName)"
         return [AttributeSyntax(attributeName: attributeName)]
-    }
-
-    private static func trackedByDefault(node: AttributeSyntax) -> Bool {
-        guard case let .argumentList(argList) = node.arguments,
-              let trackedByDefaultArg = argList.first(where: { $0.label?.trimmedDescription == "trackedByDefault" }),
-              let trackedByDefaultValue = trackedByDefaultArg.expression.as(BooleanLiteralExprSyntax.self)?.literal.trimmedDescription,
-              let value = Bool(trackedByDefaultValue)
-        else { return true }
-
-        return value
     }
 
     private static func diagnoseIssuesOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {

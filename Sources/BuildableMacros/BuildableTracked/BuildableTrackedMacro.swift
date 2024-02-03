@@ -19,10 +19,12 @@ public struct BuildableTrackedMacro: PeerMacro {
                   let type = binding.typeAnnotation?.type.trimmed
             else { continue }
 
-            let functionName = extractLabelName(from: node) ?? name
-            let escaping: AttributeSyntax? = if type.is(FunctionTypeSyntax.self) { "@escaping " } else { nil }
+            let functionName = try node.extractStringValue(for: "name") ?? name.text
+            let forceEscaping = try node.extractBooleanValue(for: "forceEscaping") ?? false
 
-            let setterFunction = try FunctionDeclSyntax("\(modifiers.trimmed)func \(functionName)(_ value: \(escaping)\(type)) -> Self") {
+            let escaping: AttributeSyntax? = if forceEscaping || type.is(FunctionTypeSyntax.self) { "@escaping " } else { nil }
+
+            let setterFunction = try FunctionDeclSyntax("\(modifiers.trimmed)func \(raw: functionName)(_ value: \(escaping)\(type)) -> Self") {
                 "var copy = self"
                 "copy.\(name) = value"
                 "return copy"

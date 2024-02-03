@@ -1,4 +1,3 @@
-import Observation
 import Foundation
 import BuildableMacro
 
@@ -11,6 +10,8 @@ struct Person {
 
     @BuildableIgnored
     var age: Int
+
+    var onChange: () -> Void = {}
 }
 
 let person = Person(name: "Alireza", lastName: "Asadi", age: 27)
