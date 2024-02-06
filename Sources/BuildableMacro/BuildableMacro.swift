@@ -1,7 +1,5 @@
 @attached(memberAttribute)
-public macro Buildable(
-    forceIgnored: Bool = false
-) = #externalMacro(
+public macro Buildable() = #externalMacro(
     module: "BuildableMacros",
     type: "BuildableMacro"
 )

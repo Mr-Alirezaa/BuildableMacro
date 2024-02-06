@@ -40,8 +40,7 @@ public struct BuildableMacro: MemberAttributeMacro {
             return []
         }
 
-        let ignored = try node.extractBooleanValue(for: "forceIgnored") ?? false
-        let attributeName: TypeSyntax = "\(raw: ignored ? ignoredAttributeName : trackedAttributeName)"
+        let attributeName: TypeSyntax = "\(raw: trackedAttributeName)"
         return [AttributeSyntax(attributeName: attributeName)]
     }
 
