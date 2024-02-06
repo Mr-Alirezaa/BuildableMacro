@@ -15,56 +15,128 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 
-    func testMacro() throws {
+    func test_BuildableTracked_whenAppliedToSettableProperties_generatesAppropriateSetterFunction() throws {
         assertMacro {
             """
-            struct Person {
-                @BuildableTracked(label: "setName")
-                var name: String = ""
-
+            struct Sample {
                 @BuildableTracked
-                var onChange: () -> Void
-
+                var p1: String
                 @BuildableTracked
-                var score: Int, isMale: Bool
-
+                var p2: String = ""
+                @BuildableTracked
+                var p3: String
+                @BuildableTracked
+                var p4: String = ""
                 @BuildableIgnored
-                var age: Int = ""
+                var p5: Int
+                @BuildableIgnored
+                var p6: Int = 0
+                let p7: Data
+                let p8: Data = Data()
+                var p9: Int { 0 }
+                var p10: Int {
+                    0
+                }
+                var p11: Int {
+                    get { 0 }
+                }
+                @BuildableTracked
+                var p12: Int {
+                    get { 0 }
+                    set { print(newValue) }
+                }
+                @BuildableTracked
+                var p13: () -> Void
+                @BuildableTracked
+                var p14: (String) -> Void
+                @BuildableTracked
+                var p15: (String) -> String
+                @BuildableTracked
+                var p16: () -> String
             }
             """
         } expansion: {
             """
-            struct Person {
-                var name: String = ""
+            struct Sample {
+                var p1: String
 
-                func name(_ value: String) -> Self {
+                func p1(_ value: String) -> Self {
                     var copy = self
-                    copy.name = value
+                    copy.p1 = value
                     return copy
                 }
-                var onChange: () -> Void
+                var p2: String = ""
 
-                func onChange(_ value: @escaping () -> Void) -> Self {
+                func p2(_ value: String) -> Self {
                     var copy = self
-                    copy.onChange = value
+                    copy.p2 = value
                     return copy
                 }
-                var score: Int, isMale: Bool
+                var p3: String
 
-                func score(_ value: Int) -> Self {
+                func p3(_ value: String) -> Self {
                     var copy = self
-                    copy.score = value
+                    copy.p3 = value
                     return copy
                 }
+                var p4: String = ""
 
-                func isMale(_ value: Bool) -> Self {
+                func p4(_ value: String) -> Self {
                     var copy = self
-                    copy.isMale = value
+                    copy.p4 = value
                     return copy
                 }
-
                 @BuildableIgnored
-                var age: Int = ""
+                var p5: Int
+                @BuildableIgnored
+                var p6: Int = 0
+                let p7: Data
+                let p8: Data = Data()
+                var p9: Int { 0 }
+                var p10: Int {
+                    0
+                }
+                var p11: Int {
+                    get { 0 }
+                }
+                var p12: Int {
+                    get { 0 }
+                    set { print(newValue) }
+                }
+
+                func p12(_ value: Int) -> Self {
+                    var copy = self
+                    copy.p12 = value
+                    return copy
+                }
+                var p13: () -> Void
+
+                func p13(_ value: @escaping () -> Void) -> Self {
+                    var copy = self
+                    copy.p13 = value
+                    return copy
+                }
+                var p14: (String) -> Void
+
+                func p14(_ value: @escaping (String) -> Void) -> Self {
+                    var copy = self
+                    copy.p14 = value
+                    return copy
+                }
+                var p15: (String) -> String
+
+                func p15(_ value: @escaping (String) -> String) -> Self {
+                    var copy = self
+                    copy.p15 = value
+                    return copy
+                }
+                var p16: () -> String
+
+                func p16(_ value: @escaping () -> String) -> Self {
+                    var copy = self
+                    copy.p16 = value
+                    return copy
+                }
             }
             """
         }

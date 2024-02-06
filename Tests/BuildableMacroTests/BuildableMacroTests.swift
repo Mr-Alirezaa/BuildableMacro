@@ -15,7 +15,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    func testMacro() throws {
+    func test_Buildable_whenAppliedToStruct_addsBuildableTrackedToSettableProperties() throws {
         assertMacro {
             """
             @Buildable
@@ -87,6 +87,19 @@ final class BuildableMacroTests: XCTestCase {
                 @BuildableTracked
                 var p16: () -> String
             }
+            """
+        }
+    }
+
+    func test_Buildable_whenAppliedToTypealias_failsWithProperError() throws {
+        assertMacro {
+            """
+            @Buildable
+            typealias Sample = Int
+            """
+        } expansion: {
+            """
+            typealias Sample = Int
             """
         }
     }
