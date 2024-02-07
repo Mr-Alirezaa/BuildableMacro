@@ -6,9 +6,15 @@ import CompilerPluginSupport
 
 let package = Package(
     name: "BuildableMacro",
-    platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6), .macCatalyst(.v13)],
+    platforms: [
+        .macOS("10.15"),
+        .iOS("13.0.0"),
+        .tvOS("13.0.0"),
+        .watchOS("6.0.0"),
+        .macCatalyst("13.0.0"),
+        .visionOS("1.0.0")
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "BuildableMacro",
             targets: ["BuildableMacro"]
@@ -19,13 +25,10 @@ let package = Package(
         ),
     ],
     dependencies: [
-        // Depend on the Swift 5.9 release of SwiftSyntax
         .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.1.0"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         // Macro implementation that performs the source transformation of a macro.
         .macro(
             name: "BuildableMacros",
