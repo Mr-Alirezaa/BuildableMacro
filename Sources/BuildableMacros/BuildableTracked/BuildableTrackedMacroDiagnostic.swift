@@ -7,6 +7,7 @@ enum BuildableTrackedMacroDiagnostic {
     case nonVariableDeclaration
     case letConstant
     case getOnlyComputedProperty
+    case protocolProperty
 }
 
 extension BuildableTrackedMacroDiagnostic: DiagnosticMessage {
@@ -24,6 +25,8 @@ extension BuildableTrackedMacroDiagnostic: DiagnosticMessage {
             "@\(macroName) can not be applied to a \"let\" constant."
         case .getOnlyComputedProperty:
             "@\(macroName) can not be applied to a get-only computed property."
+        case .protocolProperty:
+            "@\(macroName) can not be applied to a properties in a protocol declaration."
         }
     }
 
@@ -35,6 +38,8 @@ extension BuildableTrackedMacroDiagnostic: DiagnosticMessage {
             MessageID(domain: macroName, id: "letConstant")
         case .getOnlyComputedProperty:
             MessageID(domain: macroName, id: "getOnlyComputedProperty")
+        case .protocolProperty:
+            MessageID(domain: macroName, id: "protocolProperty")
         }
     }
 }

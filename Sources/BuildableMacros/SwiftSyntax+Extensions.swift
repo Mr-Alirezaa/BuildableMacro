@@ -18,6 +18,22 @@ extension SyntaxProtocol {
     }
 }
 
+extension TypeSyntaxProtocol {
+    func requiresEscaping() -> Bool {
+        if self.is(FunctionTypeSyntax.self) {
+            return true
+        } else if let tuple = self.as(TupleTypeSyntax.self) {
+            if tuple.elements.count == 1, let type = tuple.elements.first?.type.as(TypeSyntax.self) {
+                return type.requiresEscaping()
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+}
+
 extension AttributeSyntax {
     var argumentList: LabeledExprListSyntax? {
         if case let .argumentList(list) = arguments { list } else { nil }

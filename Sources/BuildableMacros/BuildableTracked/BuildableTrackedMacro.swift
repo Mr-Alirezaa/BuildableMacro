@@ -11,7 +11,8 @@ public struct BuildableTrackedMacro: PeerMacro {
         in context: C
     ) throws -> [DeclSyntax] {
         guard let variableDecl = declaration.as(VariableDeclSyntax.self) else { return [] }
-        let modifiers = variableDecl.modifiers
+
+        let modifier = modifier(for: variableDecl)
 
         var setters: [DeclSyntax] = []
         for binding in variableDecl.bindings {
@@ -22,9 +23,9 @@ public struct BuildableTrackedMacro: PeerMacro {
             let functionName = try node.extractStringValue(for: "name") ?? name.text
             let forceEscaping = try node.extractBooleanValue(for: "forceEscaping") ?? false
 
-            let escaping: AttributeSyntax? = if forceEscaping || type.is(FunctionTypeSyntax.self) { "@escaping " } else { nil }
+            let escaping: AttributeSyntax? = if forceEscaping || type.requiresEscaping() { "@escaping " } else { nil }
 
-            let setterFunction = try FunctionDeclSyntax("\(modifiers.trimmed)func \(raw: functionName)(_ value: \(escaping)\(type)) -> Self") {
+            let setterFunction = try FunctionDeclSyntax("\(modifier)func \(raw: functionName)(_ value: \(escaping)\(type)) -> Self") {
                 "var copy = self"
                 "copy.\(name) = value"
                 "return copy"
@@ -36,13 +37,25 @@ public struct BuildableTrackedMacro: PeerMacro {
         return setters
     }
 
-    private static func extractLabelName(from node: AttributeSyntax) -> TokenSyntax? {
-        guard case let .argumentList(argList) = node.arguments,
-              let labelArg = argList.first(where: { $0.label?.trimmedDescription == "name" }),
-              let labelValue = labelArg.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue
-        else { return nil }
+    private static func modifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
+        var syntax: DeclModifierSyntax?
+        if decl.modifiers.isEmpty { return nil }
 
-        return TokenSyntax.identifier(labelValue)
+        let modifiers = decl.modifiers.map(\.name.text)
+        if modifiers.contains("private") {
+            syntax = DeclModifierSyntax(name: .keyword(.private))
+        } else if modifiers.contains("internal") {
+            syntax = DeclModifierSyntax(name: .keyword(.internal))
+        } else if modifiers.contains("package") {
+            syntax = DeclModifierSyntax(name: .keyword(.package))
+        } else if modifiers.contains("public") {
+            syntax = DeclModifierSyntax(name: .keyword(.public))
+        } else {
+            syntax = nil
+        }
+
+        return syntax?
+            .with(\.trailingTrivia, .space)
     }
 
     private static func diagnoseIssuesOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {

@@ -8,7 +8,7 @@ import BuildableMacros
 final class BuildableTrackedMacroTests: XCTestCase {
     override func invokeTest() {
         withMacroTesting(
-            isRecording: true,
+            isRecording: false,
             macros: ["BuildableTracked": BuildableTrackedMacro.self]
         ) {
             super.invokeTest()
