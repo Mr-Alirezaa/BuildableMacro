@@ -10,6 +10,8 @@ public struct BuildableTrackedMacro: PeerMacro {
         providingPeersOf declaration: D,
         in context: C
     ) throws -> [DeclSyntax] {
+        try diagnoseIssuesOf(applying: node, to: declaration)
+
         guard let variableDecl = declaration.as(VariableDeclSyntax.self) else { return [] }
 
         let modifier = modifier(for: variableDecl)
@@ -58,23 +60,34 @@ public struct BuildableTrackedMacro: PeerMacro {
             .with(\.trailingTrivia, .space)
     }
 
-    private static func diagnoseIssuesOf<DG: DeclGroupSyntax>(applying node: AttributeSyntax, to decl: DG) throws {
+    private static func diagnoseIssuesOf<D: DeclSyntaxProtocol>(applying node: AttributeSyntax, to decl: D) throws {
         var diagnostics: [Diagnostic] = []
 
-        if let variableDecl = node.as(VariableDeclSyntax.self) {
+        if let variableDecl = decl.as(VariableDeclSyntax.self) {
             if variableDecl.bindingSpecifier.text == "let" {
-                diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl.bindingSpecifier))
+                diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl))
             }
 
             if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
                 switch accessors {
                 case let .accessors(accessorList):
+                    if accessorList.allSatisfy({ $0.body == nil }) {
+                        diagnostics.append(
+                            BuildableTrackedMacroDiagnostic.protocolProperty.diagnose(at: variableDecl)
+                        )
+                        break
+                    }
+
                     let specifiers = accessorList.map(\.accessorSpecifier.text)
                     if !specifiers.contains(anyOf: ["set", "_modify"]) {
-                        diagnostics.append(BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: accessors))
+                        diagnostics.append(
+                            BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: variableDecl)
+                        )
                     }
                 case .getter:
-                    diagnostics.append(BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: accessors))
+                    diagnostics.append(
+                        BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: variableDecl)
+                    )
                 }
             }
         } else {
