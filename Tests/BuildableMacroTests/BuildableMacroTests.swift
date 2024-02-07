@@ -15,9 +15,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Validates that the @Buildable macro correctly adds @BuildableTracked to simple settable properties within a 
-    /// struct.
-    func testBuildableAddsTrackedToSettableProperties() throws {
+    func testAddingBuildableTrackedToSettableProperties() throws {
         assertMacro {
             """
             @Buildable
@@ -38,9 +36,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Ensures @Buildable properly handles multiple property declarations in a single line, tagging them all as
-    /// @BuildableTracked.
-    func testBuildableAddsTrackedToSettableOneForMultipleBindings() throws {
+    func testAddingSingleBuildableTrackedToSettableOneForMultipleBindings() throws {
         assertMacro {
             """
             @Buildable
@@ -58,9 +54,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Tests the @Buildable macro's behavior with publicly accessible properties, checking if it correctly applies
-    /// @BuildableTracked while maintaining the public access specifier.
-    func testBuildableWithPublicAccessControl() throws {
+    func testPublicAccessControl() throws {
         assertMacro {
             """
             @Buildable
@@ -81,9 +75,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Checks if @Buildable respects private access control, adding @BuildableTracked to private properties without
-    /// altering their access level.
-    func testBuildableWithPrivateAccessControl() throws {
+    func testPrivateAccessControl() throws {
         assertMacro {
             """
             @Buildable
@@ -104,9 +96,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Verifies that @Buildable can handle properties with function types, correctly tagging them with
-    /// @BuildableTracked.
-    func testBuildableWithFunctionTypeProperties() throws {
+    func testFunctionTypeProperties() throws {
         assertMacro {
             """
             @Buildable
@@ -145,9 +135,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Confirms that @Buildable does not redundantly apply @BuildableTracked to properties that are already explicitly 
-    /// marked as such.
-    func testBuildableSkipsAlreadyTrackedProperties() throws {
+    func testSkippingAlreadyTrackedProperties() throws {
         assertMacro {
             """
             @Buildable
@@ -170,9 +158,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Ensures that properties marked with @BuildableIgnored are correctly skipped by the @Buildable macro, not
-    /// receiving the @BuildableTracked tag.
-    func testBuildableSkipsIgnoredProperties() throws {
+    func testSkippingIgnoredProperties() throws {
         assertMacro {
             """
             @Buildable
@@ -195,9 +181,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Tests that constant properties (declared with 'let') are appropriately ignored by @Buildable, not receiving the
-    /// @BuildableTracked tag.
-    func testBuildableSkipsConstantProperties() {
+    func testSkippingConstantProperties() {
         assertMacro {
             """
             @Buildable
@@ -216,9 +200,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Verifies that computed properties do not receive the @BuildableTracked tag, as they are not suitable for such 
-    /// modification.
-    func testBuildableSkipsComputedProperties() {
+    func testSkippingComputedProperties() {
         assertMacro {
             """
             @Buildable
@@ -249,9 +231,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Checks whether @Buildable correctly handles computed properties with a setter, applying @BuildableTracked 
-    /// appropriately.
-    func testBuildableHandlesSettableComputedProperties() {
+    func testHandlingSettableComputedProperties() {
         assertMacro {
             """
             @Buildable
@@ -275,9 +255,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Ensures that the @Buildable macro can be applied to types without properties, such as an empty struct, without
-    /// causing issues.
-    func testBuildableHandlesEmptyTypes() throws {
+    func testEmptyTypesHandling() throws {
         assertMacro {
             """
             @Buildable
@@ -292,9 +270,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Verifies the functionality of @Buildable in a scenario where nested types are involved, ensuring proper
-    /// application of @BuildableTracked within nested structures.
-    func testBuildableHandlesNestedTypes() throws {
+    func testNestedTypeHandling() throws {
         assertMacro {
             """
             @Buildable
@@ -332,9 +308,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Confirms that applying the @Buildable macro to an enum type correctly results in a compile-time error, as enums
-    /// are not supported.
-    func testBuildableThrowsErrorForEnums() throws {
+    func testErrorForEnums() throws {
         assertMacro {
             """
             @Buildable
@@ -359,9 +333,7 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    /// Checks that applying @Buildable to a protocol also results in a compile-time error, asserting that the macro is
-    /// only applicable to nominal types like classes, structs, and actors.
-    func testBuildableThrowsErrorForProtocols() throws {
+    func testErrorForProtocols() throws {
         assertMacro {
             """
             @Buildable
