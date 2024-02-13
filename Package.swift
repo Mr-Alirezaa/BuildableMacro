@@ -8,20 +8,16 @@ let package = Package(
     name: "BuildableMacro",
     platforms: [
         .macOS("10.15"),
-        .iOS("13.0.0"),
-        .tvOS("13.0.0"),
-        .watchOS("6.0.0"),
-        .macCatalyst("13.0.0"),
-        .visionOS("1.0.0")
+        .iOS("13.0"),
+        .tvOS("13.0"),
+        .watchOS("6.0"),
+        .macCatalyst("13.0"),
+        .visionOS("1.0")
     ],
     products: [
         .library(
             name: "BuildableMacro",
             targets: ["BuildableMacro"]
-        ),
-        .executable(
-            name: "BuildableMacroClient",
-            targets: ["BuildableMacroClient"]
         ),
     ],
     dependencies: [
@@ -49,7 +45,6 @@ let package = Package(
             name: "BuildableMacroTests",
             dependencies: [
                 "BuildableMacros",
-                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
                 .product(name: "MacroTesting", package: "swift-macro-testing"),
             ]
         ),

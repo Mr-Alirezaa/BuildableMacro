@@ -1,3 +1,4 @@
+#if canImport(BuildableMacros)
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
@@ -691,4 +692,4 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 }
-
+#endif
