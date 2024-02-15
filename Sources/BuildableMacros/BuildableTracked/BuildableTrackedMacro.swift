@@ -52,6 +52,8 @@ public struct BuildableTrackedMacro: PeerMacro {
             syntax = DeclModifierSyntax(name: .keyword(.package))
         } else if modifiers.contains("public") {
             syntax = DeclModifierSyntax(name: .keyword(.public))
+        } else if modifiers.contains("open") {
+            syntax = DeclModifierSyntax(name: .keyword(.open))
         } else {
             syntax = nil
         }
