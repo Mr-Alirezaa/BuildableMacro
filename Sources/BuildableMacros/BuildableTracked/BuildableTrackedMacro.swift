@@ -14,7 +14,7 @@ public struct BuildableTrackedMacro: PeerMacro {
 
         guard let variableDecl = declaration.as(VariableDeclSyntax.self) else { return [] }
 
-        let modifier = modifier(for: variableDecl)
+        let modifier = lowestAccessLevelModifier(for: variableDecl)
 
         var setters: [DeclSyntax] = []
         for binding in variableDecl.bindings {
@@ -39,7 +39,7 @@ public struct BuildableTrackedMacro: PeerMacro {
         return setters
     }
 
-    private static func modifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
+    private static func lowestAccessLevelModifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
         var syntax: DeclModifierSyntax?
         if decl.modifiers.isEmpty { return nil }
 
@@ -52,6 +52,8 @@ public struct BuildableTrackedMacro: PeerMacro {
             syntax = DeclModifierSyntax(name: .keyword(.package))
         } else if modifiers.contains("public") {
             syntax = DeclModifierSyntax(name: .keyword(.public))
+        } else if modifiers.contains("open") {
+            syntax = DeclModifierSyntax(name: .keyword(.open))
         } else {
             syntax = nil
         }
