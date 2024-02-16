@@ -43,7 +43,7 @@ public struct BuildableTrackedMacro: PeerMacro {
         var syntax: DeclModifierSyntax?
         if decl.modifiers.isEmpty { return nil }
 
-        let modifiers = decl.modifiers.map(\.name.text)
+        let modifiers = decl.modifiers.lazy.map(\.name.text)
         if modifiers.contains("private") {
             syntax = DeclModifierSyntax(name: .keyword(.private))
         } else if modifiers.contains("internal") {
