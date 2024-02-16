@@ -56,7 +56,7 @@ public struct BuildableTrackedMacro: PeerMacro {
         var diagnostics: [Diagnostic] = []
 
         if let variableDecl = decl.as(VariableDeclSyntax.self) {
-            if variableDecl.bindingSpecifier.text == "let" {
+            if variableDecl.bindingSpecifier.tokenKind == .keyword(.let) {
                 diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl))
             }
 
