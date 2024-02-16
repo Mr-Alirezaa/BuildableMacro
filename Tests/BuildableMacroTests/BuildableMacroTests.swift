@@ -232,6 +232,48 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
+    func testSkippingStaticProperties() {
+        assertMacro {
+            """
+            @Buildable
+            struct Sample {
+                static var s1: String { "ABC" }
+                static var s2: Int?
+            }
+            """
+        } expansion: {
+            """
+            struct Sample {
+                static var s1: String { "ABC" }
+                static var s2: Int?
+            }
+            """
+        }
+    }
+
+    func testSkippingClassProperties() {
+        assertMacro {
+            """
+            @Buildable
+            class Sample2 {
+                class var s1: String {
+                    get { "ABC" }
+                    set { print(newValue) }
+                }
+            }
+            """
+        } expansion: {
+            """
+            class Sample2 {
+                class var s1: String {
+                    get { "ABC" }
+                    set { print(newValue) }
+                }
+            }
+            """
+        }
+    }
+
     func testHandlingSettableComputedProperties() {
         assertMacro {
             """
