@@ -9,7 +9,7 @@ import BuildableMacros
 final class BuildableTrackedMacroTests: XCTestCase {
     override func invokeTest() {
         withMacroTesting(
-            isRecording: false,
+//            isRecording: true,
             macros: ["BuildableTracked": BuildableTrackedMacro.self]
         ) {
             super.invokeTest()
@@ -562,10 +562,10 @@ final class BuildableTrackedMacroTests: XCTestCase {
             """
             struct Sample {
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a "let" constant.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a "let" constant.
                 let p1: String
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a "let" constant.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a "let" constant.
                 let p2: String = ""
             }
             """
@@ -594,18 +594,18 @@ final class BuildableTrackedMacroTests: XCTestCase {
             """
             struct Sample {
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a get-only computed property.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a get-only computed property.
                 var p1: String { "ABC" }
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a get-only computed property.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a get-only computed property.
                 var p2: String {
                     "ABC"
                 }
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a get-only computed property.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a get-only computed property.
                 var p3: Int { get { 0 } }
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a get-only computed property.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a get-only computed property.
                 var p4: Int {
                     get { 0 }
                 }
@@ -630,13 +630,13 @@ final class BuildableTrackedMacroTests: XCTestCase {
             """
             enum Outer {
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+                ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
                 case c1
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+                ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
                 case c2
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+                ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
                 case c3
             }
             """
@@ -657,10 +657,10 @@ final class BuildableTrackedMacroTests: XCTestCase {
             """
             protocol Outer {
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a properties in a protocol declaration.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a properties in a protocol declaration.
                 var p1: String { get }
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to a properties in a protocol declaration.
+                ╰─ 🛑 @BuildableTracked cannot be applied to a properties in a protocol declaration.
                 var p2: Int { get set }
             }
             """
@@ -681,12 +681,56 @@ final class BuildableTrackedMacroTests: XCTestCase {
             """
             struct Sample {
                 @BuildableTracked
-                ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+                ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
                 func f1() -> String { "" }
             }
             @BuildableTracked
-            ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+            ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
             func f2() -> Int { 0 }
+            """
+        }
+    }
+
+    func testErrorForStaticProperties() throws {
+        assertMacro {
+            """
+            struct Sample {
+                @BuildableTracked
+                static var s1: String = ""
+            }
+            """
+        } diagnostics: {
+            """
+            struct Sample {
+                @BuildableTracked
+                ╰─ 🛑 @BuildableTracked cannot be applied to "static" or "class" properties.
+                static var s1: String = ""
+            }
+            """
+        }
+    }
+
+    func testErrorForClassProperties() throws {
+        assertMacro {
+            """
+            class Sample {
+                @BuildableTracked
+                class var c1: String {
+                    get { "" }
+                    set { print(newValue) }
+                }
+            }
+            """
+        } diagnostics: {
+            """
+            class Sample {
+                @BuildableTracked
+                ╰─ 🛑 @BuildableTracked cannot be applied to "static" or "class" properties.
+                class var c1: String {
+                    get { "" }
+                    set { print(newValue) }
+                }
+            }
             """
         }
     }
@@ -702,7 +746,7 @@ final class BuildableTrackedMacroTests: XCTestCase {
         } diagnostics: {
             """
             @BuildableTracked
-            ╰─ 🛑 @BuildableTracked can not be applied to non-variable declarations.
+            ╰─ 🛑 @BuildableTracked cannot be applied to non-variable declarations.
             struct Sample {
                 var p1: String
             }
