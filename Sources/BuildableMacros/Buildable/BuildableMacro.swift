@@ -17,8 +17,8 @@ public struct BuildableMacro: MemberAttributeMacro {
         try diagnoseIssuesOf(applying: node, to: declaration)
 
         guard let variableDecl = member.as(VariableDeclSyntax.self),
-              variableDecl.bindingSpecifier.text == "var",
               !variableDecl.modifiers.lazy.map(\.name.text).contains(anyOf: ["static", "class"])
+              variableDecl.bindingSpecifier.tokenKind == .keyword(.var),
         else { return [] }
 
         if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
