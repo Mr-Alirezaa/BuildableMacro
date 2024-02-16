@@ -80,7 +80,7 @@ public struct BuildableTrackedMacro: PeerMacro {
                         break
                     }
 
-                    let specifiers = accessorList.map(\.accessorSpecifier.text)
+                    let specifiers = accessorList.lazy.map(\.accessorSpecifier.text)
                     if !specifiers.contains(anyOf: ["set", "_modify"]) {
                         diagnostics.append(
                             BuildableTrackedMacroDiagnostic.getOnlyComputedProperty.diagnose(at: variableDecl)
