@@ -24,8 +24,8 @@ public struct BuildableMacro: MemberAttributeMacro {
         if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
             switch accessors {
             case let .accessors(accessorList):
-                let specifiers = accessorList.lazy.map(\.accessorSpecifier.text)
-                if !specifiers.contains(anyOf: ["set", "_modify"]) {
+                let specifiers = accessorList.lazy.map(\.accessorSpecifier.tokenKind)
+                if !specifiers.contains(anyOf: [.keyword(.set), .keyword(._modify)]) {
                     return []
                 }
             case .getter:
