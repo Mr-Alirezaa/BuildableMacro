@@ -146,16 +146,21 @@ final class BuildableTrackedMacroTests: XCTestCase {
     func testOpenAccessControlSetters() throws {
         assertMacro {
             """
-            struct Sample {
+            open class Sample {
                 @BuildableTracked
                 open var p1: String
                 @BuildableTracked
                 open var p2: String = ""
+
+                init(p1: String, p2: String) {
+                    self.p1 = p1
+                    self.p2 = p2
+                }
             }
             """
         } expansion: {
             """
-            struct Sample {
+            open class Sample {
                 open var p1: String
 
                 open func p1(_ value: String) -> Self {
@@ -169,6 +174,11 @@ final class BuildableTrackedMacroTests: XCTestCase {
                     var copy = self
                     copy.p2 = value
                     return copy
+                }
+
+                init(p1: String, p2: String) {
+                    self.p1 = p1
+                    self.p2 = p2
                 }
             }
             """
