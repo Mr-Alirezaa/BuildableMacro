@@ -313,6 +313,38 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 
+    func testReversedOrderAccessControls() throws {
+        assertMacro {
+            """
+            public struct Sample {
+                @BuildableTracked
+                public private(set) var p1: String
+                @BuildableTracked
+                private(set) public var p2: String = ""
+            }
+            """
+        } expansion: {
+            """
+            public struct Sample {
+                public private(set) var p1: String
+
+                private func p1(_ value: String) -> Self {
+                    var copy = self
+                    copy.p1 = value
+                    return copy
+                }
+                public private(set) var p2: String = ""
+
+                private func p2(_ value: String) -> Self {
+                    var copy = self
+                    copy.p2 = value
+                    return copy
+                }
+            }
+            """
+        }
+    }
+
     func testFileprivateAccessControlSetters() throws {
         assertMacro {
             """
