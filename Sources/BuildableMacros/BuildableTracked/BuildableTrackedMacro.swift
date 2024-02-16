@@ -60,7 +60,7 @@ public struct BuildableTrackedMacro: PeerMacro {
                 diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl))
             }
 
-            if variableDecl.modifiers.lazy.map(\.name.text).contains(anyOf: ["static", "class"]) {
+            if variableDecl.modifiers.lazy.map(\.name.tokenKind).contains(anyOf: [.keyword(.static), .keyword(.class)]) {
                 diagnostics.append(BuildableTrackedMacroDiagnostic.staticProperty.diagnose(at: variableDecl))
             }
 
