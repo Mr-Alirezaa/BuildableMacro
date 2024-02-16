@@ -40,22 +40,16 @@ public struct BuildableTrackedMacro: PeerMacro {
     }
 
     private static func lowestAccessLevelModifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
-        let syntax: DeclModifierSyntax?
         if decl.modifiers.isEmpty { return nil }
 
         let modifiers = decl.modifiers.lazy.map(\.name)
-        if let name = modifiers.last(where: {
+        guard let name = modifiers.last(where: {
             guard case let .keyword(accessLevel) = $0.tokenKind else { return false }
             let accessLevels: [SwiftSyntax.Keyword] = [.private, .fileprivate, .internal, .package, .public, .open]
             return accessLevels.contains(accessLevel)
-        }) {
-            syntax = DeclModifierSyntax(name: name)
-        } else {
-            syntax = nil
-        }
+        }) else { return nil }
 
-        return syntax?
-            .with(\.trailingTrivia, .space)
+        return DeclModifierSyntax(name: name).with(\.trailingTrivia, .space)
     }
 
     private static func diagnoseIssuesOf<D: DeclSyntaxProtocol>(applying node: AttributeSyntax, to decl: D) throws {
