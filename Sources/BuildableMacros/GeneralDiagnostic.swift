@@ -15,7 +15,7 @@ extension GeneralDiagnostic: DiagnosticMessage {
     var message: String {
         switch self {
         case let .unknownLiteralExpr(expectedType):
-            "Expression is unknown. Value for the argument must be a literal of type \"\(String(describing: expectedType))\""
+            "Expression is unknown. Value for the argument must be a literal of type \"\(expectedType)\""
         }
     }
 
