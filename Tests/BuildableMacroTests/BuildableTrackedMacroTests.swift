@@ -271,6 +271,38 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 
+    func testFileprivateAccessControlSetters() throws {
+        assertMacro {
+            """
+            struct Sample {
+                @BuildableTracked
+                fileprivate var p1: String
+                @BuildableTracked
+                fileprivate var p2: String = ""
+            }
+            """
+        } expansion: {
+            """
+            struct Sample {
+                fileprivate var p1: String
+
+                fileprivate func p1(_ value: String) -> Self {
+                    var copy = self
+                    copy.p1 = value
+                    return copy
+                }
+                fileprivate var p2: String = ""
+
+                fileprivate func p2(_ value: String) -> Self {
+                    var copy = self
+                    copy.p2 = value
+                    return copy
+                }
+            }
+            """
+        }
+    }
+
     func testEscapingSettersForFunctionTypes() throws {
         assertMacro {
             """
