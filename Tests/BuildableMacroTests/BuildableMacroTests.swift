@@ -9,7 +9,7 @@ import BuildableMacros
 final class BuildableMacroTests: XCTestCase {
     override func invokeTest() {
         withMacroTesting(
-            isRecording: false,
+//            isRecording: true,
             macros: ["Buildable": BuildableMacro.self]
         ) {
             super.invokeTest()
@@ -226,6 +226,48 @@ final class BuildableMacroTests: XCTestCase {
                 var p3: Int { get { 0 } }
                 var p4: Int {
                     get { 0 }
+                }
+            }
+            """
+        }
+    }
+
+    func testSkippingStaticProperties() {
+        assertMacro {
+            """
+            @Buildable
+            struct Sample {
+                static var s1: String = ""
+                static var s2: Int?
+            }
+            """
+        } expansion: {
+            """
+            struct Sample {
+                static var s1: String = ""
+                static var s2: Int?
+            }
+            """
+        }
+    }
+
+    func testSkippingClassProperties() {
+        assertMacro {
+            """
+            @Buildable
+            class Sample {
+                class var c1: String {
+                    get { "" }
+                    set { print(newValue) }
+                }
+            }
+            """
+        } expansion: {
+            """
+            class Sample {
+                class var c1: String {
+                    get { "" }
+                    set { print(newValue) }
                 }
             }
             """

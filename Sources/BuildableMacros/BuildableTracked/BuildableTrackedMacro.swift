@@ -72,6 +72,10 @@ public struct BuildableTrackedMacro: PeerMacro {
                 diagnostics.append(BuildableTrackedMacroDiagnostic.letConstant.diagnose(at: variableDecl))
             }
 
+            if variableDecl.modifiers.lazy.map(\.name.text).contains(anyOf: ["static", "class"]) {
+                diagnostics.append(BuildableTrackedMacroDiagnostic.staticProperty.diagnose(at: variableDecl))
+            }
+
             if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
                 switch accessors {
                 case let .accessors(accessorList):
