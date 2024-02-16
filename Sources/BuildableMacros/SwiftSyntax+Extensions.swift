@@ -22,10 +22,11 @@ extension TypeSyntaxProtocol {
     func requiresEscaping() -> Bool {
         if self.is(FunctionTypeSyntax.self) {
             return true
-        } else if let tuple = self.as(TupleTypeSyntax.self) {
-            if tuple.elements.count == 1, let type = tuple.elements.first?.type.as(TypeSyntax.self) {
-                return type.requiresEscaping()
-            }
+        } else if
+            let tuple = self.as(TupleTypeSyntax.self),
+            tuple.elements.count == 1,
+            let type = tuple.elements.first?.type.as(TypeSyntax.self) {
+            return type.requiresEscaping()
         }
         return false
     }
