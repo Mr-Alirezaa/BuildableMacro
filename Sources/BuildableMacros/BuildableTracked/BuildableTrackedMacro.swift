@@ -46,6 +46,8 @@ public struct BuildableTrackedMacro: PeerMacro {
         let modifiers = decl.modifiers.map(\.name.text)
         if modifiers.contains("private") {
             syntax = DeclModifierSyntax(name: .keyword(.private))
+        } else if modifiers.contains("fileprivate") {
+            syntax = DeclModifierSyntax(name: .keyword(.fileprivate))
         } else if modifiers.contains("internal") {
             syntax = DeclModifierSyntax(name: .keyword(.internal))
         } else if modifiers.contains("package") {
