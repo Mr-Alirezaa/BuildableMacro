@@ -143,6 +143,38 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 
+    func testOpenAccessControlSetters() throws {
+        assertMacro {
+            """
+            struct Sample {
+                @BuildableTracked
+                open var p1: String
+                @BuildableTracked
+                open var p2: String = ""
+            }
+            """
+        } expansion: {
+            """
+            struct Sample {
+                open var p1: String
+
+                open func p1(_ value: String) -> Self {
+                    var copy = self
+                    copy.p1 = value
+                    return copy
+                }
+                open var p2: String = ""
+
+                open func p2(_ value: String) -> Self {
+                    var copy = self
+                    copy.p2 = value
+                    return copy
+                }
+            }
+            """
+        }
+    }
+
     func testPublicAccessControlSetters() throws {
         assertMacro {
             """
