@@ -40,7 +40,7 @@ public struct BuildableTrackedMacro: PeerMacro {
     }
 
     private static func lowestAccessLevelModifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
-        var syntax: DeclModifierSyntax?
+        let syntax: DeclModifierSyntax?
         if decl.modifiers.isEmpty { return nil }
 
         let modifiers = decl.modifiers.lazy.map(\.name.tokenKind)
