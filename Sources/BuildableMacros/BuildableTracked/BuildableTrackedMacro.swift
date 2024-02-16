@@ -43,18 +43,18 @@ public struct BuildableTrackedMacro: PeerMacro {
         var syntax: DeclModifierSyntax?
         if decl.modifiers.isEmpty { return nil }
 
-        let modifiers = decl.modifiers.lazy.map(\.name.text)
-        if modifiers.contains("private") {
+        let modifiers = decl.modifiers.lazy.map(\.name.tokenKind)
+        if modifiers.contains(where: { $0 == .keyword(.private) }) {
             syntax = DeclModifierSyntax(name: .keyword(.private))
-        } else if modifiers.contains("fileprivate") {
+        } else if modifiers.contains(where: { $0 == .keyword(.fileprivate) }) {
             syntax = DeclModifierSyntax(name: .keyword(.fileprivate))
-        } else if modifiers.contains("internal") {
+        } else if modifiers.contains(where: { $0 == .keyword(.internal) }) {
             syntax = DeclModifierSyntax(name: .keyword(.internal))
-        } else if modifiers.contains("package") {
+        } else if modifiers.contains(where: { $0 == .keyword(.package) }) {
             syntax = DeclModifierSyntax(name: .keyword(.package))
-        } else if modifiers.contains("public") {
+        } else if modifiers.contains(where: { $0 == .keyword(.public) }) {
             syntax = DeclModifierSyntax(name: .keyword(.public))
-        } else if modifiers.contains("open") {
+        } else if modifiers.contains(where: { $0 == .keyword(.open) }) {
             syntax = DeclModifierSyntax(name: .keyword(.open))
         } else {
             syntax = nil
