@@ -46,7 +46,7 @@ public struct BuildableTrackedMacro: PeerMacro {
         let modifiers = decl.modifiers.lazy.map(\.name.tokenKind)
 
         for accessLevel in accessLevels {
-            if modifiers.contains(where: { $0 == .keyword(accessLevel) }) {
+            if modifiers.contains(.keyword(accessLevel)) {
                 return DeclModifierSyntax(name: .keyword(accessLevel)).with(\.trailingTrivia, .space)
             }
         }
