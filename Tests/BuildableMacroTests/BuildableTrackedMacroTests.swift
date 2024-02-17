@@ -333,7 +333,7 @@ final class BuildableTrackedMacroTests: XCTestCase {
                     copy.p1 = value
                     return copy
                 }
-                public private(set) var p2: String = ""
+                private(set) public var p2: String = ""
 
                 private func p2(_ value: String) -> Self {
                     var copy = self
