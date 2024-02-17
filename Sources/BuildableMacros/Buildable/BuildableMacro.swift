@@ -17,15 +17,15 @@ public struct BuildableMacro: MemberAttributeMacro {
         try diagnoseIssuesOf(applying: node, to: declaration)
 
         guard let variableDecl = member.as(VariableDeclSyntax.self),
-              variableDecl.bindingSpecifier.text == "var",
-              !variableDecl.modifiers.lazy.map(\.name.text).contains(anyOf: ["static", "class"])
+              variableDecl.bindingSpecifier.tokenKind == .keyword(.var),
+              !variableDecl.modifiers.lazy.map(\.name.tokenKind).contains(anyOf: [.keyword(.static), .keyword(.class)])
         else { return [] }
 
         if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
             switch accessors {
             case let .accessors(accessorList):
-                let specifiers = accessorList.lazy.map(\.accessorSpecifier.text)
-                if !specifiers.contains(anyOf: ["set", "_modify"]) {
+                let specifiers = accessorList.lazy.map(\.accessorSpecifier.tokenKind)
+                if !specifiers.contains(anyOf: [.keyword(.set), .keyword(._modify)]) {
                     return []
                 }
             case .getter:
