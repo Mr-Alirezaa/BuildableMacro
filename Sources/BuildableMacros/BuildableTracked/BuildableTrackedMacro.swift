@@ -40,7 +40,6 @@ public struct BuildableTrackedMacro: PeerMacro {
     }
 
     private static func lowestAccessLevelModifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
-        let syntax: DeclModifierSyntax
         if decl.modifiers.isEmpty { return nil }
 
         let accessLevels: [SwiftSyntax.Keyword] = [.private, .fileprivate, .internal, .package, .public, .open]
@@ -48,8 +47,7 @@ public struct BuildableTrackedMacro: PeerMacro {
 
         for accessLevel in accessLevels {
             if modifiers.contains(where: { $0 == .keyword(accessLevel) }) {
-                syntax = DeclModifierSyntax(name: .keyword(accessLevel))
-                return syntax.with(\.trailingTrivia, .space)
+                return DeclModifierSyntax(name: .keyword(accessLevel)).with(\.trailingTrivia, .space)
             }
         }
 
