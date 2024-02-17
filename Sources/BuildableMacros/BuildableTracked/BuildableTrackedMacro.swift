@@ -40,25 +40,16 @@ public struct BuildableTrackedMacro: PeerMacro {
     }
 
     private static func lowestAccessLevelModifier(for decl: VariableDeclSyntax) -> DeclModifierSyntax? {
-        let syntax: DeclModifierSyntax
         if decl.modifiers.isEmpty { return nil }
 
+        let accessLevels: [SwiftSyntax.Keyword] = [.private, .fileprivate, .internal, .package, .public, .open]
         let modifiers = decl.modifiers.lazy.map(\.name.tokenKind)
-        if modifiers.contains(where: { $0 == .keyword(.private) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.private))
-        } else if modifiers.contains(where: { $0 == .keyword(.fileprivate) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.fileprivate))
-        } else if modifiers.contains(where: { $0 == .keyword(.internal) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.internal))
-        } else if modifiers.contains(where: { $0 == .keyword(.package) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.package))
-        } else if modifiers.contains(where: { $0 == .keyword(.public) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.public))
-        } else if modifiers.contains(where: { $0 == .keyword(.open) }) {
-            syntax = DeclModifierSyntax(name: .keyword(.open))
-        } else { return nil }
 
-        return syntax.with(\.trailingTrivia, .space)
+        if let accessModifier = accessLevels.first(where: { modifiers.contains(.keyword($0)) }) {
+            return DeclModifierSyntax(name: .keyword(accessModifier)).with(\.trailingTrivia, .space)
+        } else {
+            return nil
+        }
     }
 
     private static func diagnoseIssuesOf<D: DeclSyntaxProtocol>(applying node: AttributeSyntax, to decl: D) throws {
