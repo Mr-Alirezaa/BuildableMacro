@@ -45,13 +45,11 @@ public struct BuildableTrackedMacro: PeerMacro {
         let accessLevels: [SwiftSyntax.Keyword] = [.private, .fileprivate, .internal, .package, .public, .open]
         let modifiers = decl.modifiers.lazy.map(\.name.tokenKind)
 
-        for accessLevel in accessLevels {
-            if modifiers.contains(.keyword(accessLevel)) {
-                return DeclModifierSyntax(name: .keyword(accessLevel)).with(\.trailingTrivia, .space)
-            }
+        if let accessModifier = accessLevels.first(where: { modifiers.contains(.keyword($0)) }) {
+            return DeclModifierSyntax(name: .keyword(accessModifier)).with(\.trailingTrivia, .space)
+        } else {
+            return nil
         }
-
-        return nil
     }
 
     private static func diagnoseIssuesOf<D: DeclSyntaxProtocol>(applying node: AttributeSyntax, to decl: D) throws {
