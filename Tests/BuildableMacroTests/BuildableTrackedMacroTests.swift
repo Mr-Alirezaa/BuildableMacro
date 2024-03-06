@@ -115,6 +115,7 @@ final class BuildableTrackedMacroTests: XCTestCase {
     }
 
     func testMultipleSettersForMultiBindings() throws {
+#if SWIFT_SYNTAX_509
         assertMacro {
             """
             struct Sample {
@@ -141,6 +142,33 @@ final class BuildableTrackedMacroTests: XCTestCase {
             }
             """
         }
+#else
+        throw XCTSkip("\(#function) is only testable with SwiftSyntax 509")
+#endif
+    }
+
+    func testErrorOnMultiBindings() throws {
+#if SWIFT_SYNTAX_510
+        assertMacro {
+            """
+            struct Sample {
+                @BuildableTracked
+                var p1: String, p2: Int
+            }
+            """
+        } diagnostics: {
+            """
+            struct Sample {
+                @BuildableTracked
+                ┬────────────────
+                ╰─ 🛑 peer macro can only be applied to a single variable
+                var p1: String, p2: Int
+            }
+            """
+        }
+#else
+        throw XCTSkip("\(#function) is only testable with SwiftSyntax 510")
+#endif
     }
 
     func testOpenAccessControlSetters() throws {

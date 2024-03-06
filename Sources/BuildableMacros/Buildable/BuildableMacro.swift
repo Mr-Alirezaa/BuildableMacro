@@ -18,10 +18,12 @@ public struct BuildableMacro: MemberAttributeMacro {
 
         guard let variableDecl = member.as(VariableDeclSyntax.self),
               variableDecl.bindingSpecifier.tokenKind == .keyword(.var),
-              !variableDecl.modifiers.lazy.map(\.name.tokenKind).contains(anyOf: [.keyword(.static), .keyword(.class)])
+              !variableDecl.modifiers.lazy.map(\.name.tokenKind).contains(anyOf: [.keyword(.static), .keyword(.class)]),
+              variableDecl.bindings.count == 1
         else { return [] }
 
-        if let firstBinding = variableDecl.bindings.first, let accessors = firstBinding.accessorBlock?.accessors {
+        let firstBinding = variableDecl.bindings.first!
+        if let accessors = firstBinding.accessorBlock?.accessors {
             switch accessors {
             case let .accessors(accessorList):
                 let specifiers = accessorList.lazy.map(\.accessorSpecifier.tokenKind)
