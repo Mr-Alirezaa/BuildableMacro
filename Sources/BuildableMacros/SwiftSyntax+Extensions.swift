@@ -25,7 +25,7 @@ extension TypeSyntaxProtocol {
         } else if
             let tuple = self.as(TupleTypeSyntax.self),
             tuple.elements.count == 1,
-            let type = tuple.elements.first?.type.as(TypeSyntax.self) {
+            let type = (tuple.elements.first?.type).flatMap(TypeSyntax.init) {
             return type.requiresEscaping()
         }
         return false

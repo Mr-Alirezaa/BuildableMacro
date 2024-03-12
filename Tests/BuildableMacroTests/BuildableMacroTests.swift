@@ -37,24 +37,6 @@ final class BuildableMacroTests: XCTestCase {
         }
     }
 
-    func testAddingSingleBuildableTrackedToSettableOneForMultipleBindings() throws {
-        assertMacro {
-            """
-            @Buildable
-            struct Sample {
-                var p1: String, p2: Int
-            }
-            """
-        } expansion: {
-            """
-            struct Sample {
-                @BuildableTracked
-                var p1: String, p2: Int
-            }
-            """
-        }
-    }
-
     func testPublicAccessControl() throws {
         assertMacro {
             """
@@ -269,6 +251,23 @@ final class BuildableMacroTests: XCTestCase {
                     get { "" }
                     set { print(newValue) }
                 }
+            }
+            """
+        }
+    }
+
+    func testSkippingMultipleBindingsProperties() {
+        assertMacro {
+            """
+            @Buildable
+            struct Sample {
+                var p1: String, p2: Int
+            }
+            """
+        } expansion: {
+            """
+            struct Sample {
+                var p1: String, p2: Int
             }
             """
         }

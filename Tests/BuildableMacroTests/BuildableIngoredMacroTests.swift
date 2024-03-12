@@ -9,7 +9,7 @@ import BuildableMacros
 final class BuildableIngoredMacroTests: XCTestCase {
     override func invokeTest() {
         withMacroTesting(
-            isRecording: false,
+//            isRecording: true,
             macros: ["BuildableIgnored": BuildableIgnoredMacro.self]
         ) {
             super.invokeTest()

@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -21,7 +21,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "510.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.1.0"),
     ],
     targets: [
@@ -48,7 +48,7 @@ let package = Package(
                 .product(name: "MacroTesting", package: "swift-macro-testing"),
             ],
             swiftSettings: [
-                .define("SWIFT_SYNTAX_509")
+                .define("SWIFT_SYNTAX_510")
             ]
         ),
     ]
