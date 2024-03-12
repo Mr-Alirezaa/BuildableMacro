@@ -30,15 +30,27 @@ let package = Package(
             name: "BuildableMacros",
             dependencies: [
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
             ]
         ),
 
         // Library that exposes a macro as part of its API, which is used in client programs.
-        .target(name: "BuildableMacro", dependencies: ["BuildableMacros"]),
+        .target(
+            name: "BuildableMacro",
+            dependencies: ["BuildableMacros"],
+            resources: [
+                .process("../PrivacyInfo.xcprivacy"),
+            ]
+        ),
 
         // A client of the library, which is able to use the macro in its own code.
-        .executableTarget(name: "BuildableMacroClient", dependencies: ["BuildableMacro"]),
+        .executableTarget(
+            name: "BuildableMacroClient",
+            dependencies: ["BuildableMacro"],
+            resources: [
+                .process("../PrivacyInfo.xcprivacy"),
+            ]
+        ),
 
         // A test target used to develop the macro implementation.
         .testTarget(
