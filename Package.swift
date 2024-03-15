@@ -21,7 +21,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
+        .package(url: "https://github.com/apple/swift-syntax.git", "509.0.0" ..< "511.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-macro-testing.git", from: "0.1.0"),
     ],
     targets: [
@@ -58,9 +58,6 @@ let package = Package(
             dependencies: [
                 "BuildableMacros",
                 .product(name: "MacroTesting", package: "swift-macro-testing"),
-            ],
-            swiftSettings: [
-                .define("SWIFT_SYNTAX_509")
             ]
         ),
     ]

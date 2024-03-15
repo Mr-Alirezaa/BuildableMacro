@@ -114,8 +114,8 @@ final class BuildableTrackedMacroTests: XCTestCase {
         }
     }
 
+#if !canImport(SwiftSyntax510)
     func testMultipleSettersForMultiBindings() throws {
-#if SWIFT_SYNTAX_509
         assertMacro {
             """
             struct Sample {
@@ -142,13 +142,11 @@ final class BuildableTrackedMacroTests: XCTestCase {
             }
             """
         }
-#else
-        throw XCTSkip("\(#function) is only testable with SwiftSyntax 509")
-#endif
     }
+#endif
 
+#if canImport(SwiftSyntax510)
     func testErrorOnMultiBindings() throws {
-#if SWIFT_SYNTAX_510
         assertMacro {
             """
             struct Sample {
@@ -166,10 +164,8 @@ final class BuildableTrackedMacroTests: XCTestCase {
             }
             """
         }
-#else
-        throw XCTSkip("\(#function) is only testable with SwiftSyntax 510")
-#endif
     }
+#endif
 
     func testOpenAccessControlSetters() throws {
         assertMacro {
